@@ -1,5 +1,57 @@
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import { useMemo } from "react";
 import { IoMdAdd } from "react-icons/io";
+import {
+    createColumnHelper,
+    flexRender,
+    getCoreRowModel,
+    getPaginationRowModel,
+    useReactTable,
+} from "@tanstack/react-table";
+
 const Tasks = () => {
+    const { data: tasks = [] } = useQuery({
+        queryKey: ["tasks"],
+        queryFn: async () => {
+            const res = await axios.get("tasks.json");
+            return res.data;
+        },
+    });
+
+    const data = useMemo(() => tasks, [tasks]);
+
+    console.log(data);
+
+    const columnHelper = createColumnHelper();
+
+    const columns = [
+        columnHelper.accessor("#",{
+            cell:info => info.row.index +1,
+            header: "NO"
+        }),
+        columnHelper.accessor("title", {
+            cell: (info) => info.getValue(),
+            header: "Title",
+        }),
+        columnHelper.accessor("dueDate", {
+            cell: (info) => info.getValue(),
+            header: "Due Date",
+        }),
+        columnHelper.accessor("priority", {
+            cell: (info) => info.getValue(),
+            header: "Priority",
+        }),
+    ];
+
+
+    const table = useReactTable({
+        data,
+        columns,
+        getCoreRowModel: getCoreRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
+    });
+
     return (
         <section className="mt-10 mx-5">
             <div className="md:flex justify-between">
@@ -34,37 +86,36 @@ const Tasks = () => {
             <div className="mt-5">
                 <div className="overflow-x-auto">
                     <table className="table">
-                        {/* head */}
-                        <thead>
-                            <tr>
-                                <th></th>
-                                <th>Name</th>
-                                <th>Job</th>
-                                <th>Favorite Color</th>
-                            </tr>
+                        <thead className="font-bold text-black">
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <tr key={headerGroup.id}>
+                                    {headerGroup.headers.map((header) => (
+                                        <th key={header.id}>
+                                            {header.isPlaceholder
+                                                ? null
+                                                : flexRender(
+                                                      header.column.columnDef
+                                                          .header,
+                                                      header.getContext()
+                                                  )}
+                                        </th>
+                                    ))}
+                                </tr>
+                            ))}
                         </thead>
                         <tbody>
-                            {/* row 1 */}
-                            <tr>
-                                <th>1</th>
-                                <td>Cy Ganderton</td>
-                                <td>Quality Control Specialist</td>
-                                <td>Blue</td>
-                            </tr>
-                            {/* row 2 */}
-                            <tr>
-                                <th>2</th>
-                                <td>Hart Hagerty</td>
-                                <td>Desktop Support Technician</td>
-                                <td>Purple</td>
-                            </tr>
-                            {/* row 3 */}
-                            <tr>
-                                <th>3</th>
-                                <td>Brice Swyre</td>
-                                <td>Tax Accountant</td>
-                                <td>Red</td>
-                            </tr>
+                            {table.getRowModel().rows.map((row) => (
+                                <tr key={row.id}>
+                                    {row.getVisibleCells().map((cell) => (
+                                        <td key={cell.id}>
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </td>
+                                    ))}
+                                </tr>
+                            ))}
                         </tbody>
                     </table>
                 </div>
