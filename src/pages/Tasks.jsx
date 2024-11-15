@@ -10,6 +10,7 @@ import {
     getPaginationRowModel,
     useReactTable,
 } from "@tanstack/react-table";
+import AddTaskModal from "../components/AddTaskModal";
 
 const Tasks = () => {
     const { data: tasks = [] } = useQuery({
@@ -67,18 +68,19 @@ const Tasks = () => {
             header: "Priority",
         }),
         columnHelper.display({
-            cell:({row})=>(
+            cell: ({ row }) => (
                 <input type="checkbox" className="checkbox checkbox-info" />
             ),
-            header:"Action"
+            header: "Action",
         }),
         columnHelper.display({
-            cell:({row})=>(
-                <button className="btn btn-xs btn-outline p-1 border-2 border-red-500  text-red-500"><RiDeleteBin6Line size={15} /></button>
+            cell: ({ row }) => (
+                <button className="btn btn-xs btn-outline p-1 border-2 border-red-500  text-red-500">
+                    <RiDeleteBin6Line size={15} />
+                </button>
             ),
-            header:"Action"
+            header: "Action",
         }),
-
     ];
 
     const table = useReactTable({
@@ -113,7 +115,12 @@ const Tasks = () => {
                     </label>
                 </div>
                 <div className="mt-5 md:mt-0 w-full md:w-auto">
-                    <button className="btn w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-white">
+                    <button
+                        onClick={() =>
+                            document.getElementById("my_modal_3").showModal()
+                        }
+                        className="btn w-full md:w-auto bg-blue-600 hover:bg-blue-500 text-white"
+                    >
                         <IoMdAdd size={20} /> Assign Task
                     </button>
                 </div>
@@ -156,6 +163,7 @@ const Tasks = () => {
                     </table>
                 </div>
             </div>
+            <AddTaskModal/>
         </section>
     );
 };
