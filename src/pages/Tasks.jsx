@@ -26,30 +26,52 @@ const Tasks = () => {
     const columnHelper = createColumnHelper();
 
     const columns = [
-        columnHelper.accessor("#",{
-            cell:info => info.row.index +1,
-            header: "NO"
+        columnHelper.accessor("#", {
+            cell: (info) => info.row.index + 1,
+            header: "NO",
         }),
-        columnHelper.accessor("title", {
+        columnHelper.accessor("task", {
             cell: (info) => info.getValue(),
-            header: "Title",
+            header: "Task",
         }),
-        columnHelper.accessor("dueDate", {
+        columnHelper.accessor("deadline", {
             cell: (info) => info.getValue(),
-            header: "Due Date",
+            header: "Deadline",
         }),
         columnHelper.accessor("priority", {
-            cell: (info) => info.getValue(),
+            cell: (info) => (
+                <span
+                    className={`py-[2px] px-3 rounded-full font-medium ${
+                        info.getValue() === "Urgent" &&
+                        "bg-red-100 text-red-600"
+                    } 
+                    ${
+                        info.getValue() === "Normal" &&
+                        "bg-blue-100 text-blue-600"
+                    }
+                    ${
+                        info.getValue() === "High" &&
+                        "bg-yellow-100 text-yellow-600"
+                    }
+                    ${
+                        info.getValue() === "Low" &&
+                        "bg-green-100 text-green-600"
+                    }
+                    
+                    `}
+                >
+                    {info.getValue()}
+                </span>
+            ),
             header: "Priority",
         }),
     ];
-
 
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        getPaginationRowModel: getPaginationRowModel(),
+        // getPaginationRowModel: getPaginationRowModel(),
     });
 
     return (
