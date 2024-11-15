@@ -3,6 +3,7 @@ import axios from "axios";
 import { useMemo } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { RiDeleteBin6Line } from "react-icons/ri";
+import { RxDotFilled } from "react-icons/rx";
 import {
     createColumnHelper,
     flexRender,
@@ -43,7 +44,7 @@ const Tasks = () => {
         columnHelper.accessor("priority", {
             cell: (info) => (
                 <span
-                    className={`py-[2px] px-3 rounded-full font-medium ${
+                    className={`py-[2px] px-3 rounded-full font-medium flex items-center w-fit ${
                         info.getValue() === "Urgent" &&
                         "bg-red-100 text-red-600"
                     } 
@@ -62,6 +63,7 @@ const Tasks = () => {
                     
                     `}
                 >
+                    <RxDotFilled/>
                     {info.getValue()}
                 </span>
             ),
@@ -71,7 +73,7 @@ const Tasks = () => {
             cell: ({ row }) => (
                 <input type="checkbox" className="checkbox checkbox-info" />
             ),
-            header: "Action",
+            header: "Completed",
         }),
         columnHelper.display({
             cell: ({ row }) => (
