@@ -1,0 +1,33 @@
+[
+    {
+      "title": "Complete project proposal",
+      "priority": "High",
+      "dueDate": "2024-11-15"
+    },
+    {
+      "title": "Schedule team meeting",
+      "priority": "Medium",
+      "dueDate": "2024-11-17"
+    },
+    {
+      "title": "Update task manager UI",
+      "priority": "Low",
+      "dueDate": "2024-11-20"
+    },
+    {
+      "title": "Submit code review",
+      "priority": "High",
+      "dueDate": "2024-11-16"
+    },
+    {
+      "title": "Prepare presentation slides",
+      "priority": "Medium",
+      "dueDate": "2024-11-18"
+    },
+    {
+      "title": "Clean up workspace",
+      "priority": "Low",
+      "dueDate": "2024-11-21"
+    }
+  ]
+  
