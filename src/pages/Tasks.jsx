@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { useMemo } from "react";
 import { IoMdAdd } from "react-icons/io";
+import { RiDeleteBin6Line } from "react-icons/ri";
 import {
     createColumnHelper,
     flexRender,
@@ -65,13 +66,26 @@ const Tasks = () => {
             ),
             header: "Priority",
         }),
+        columnHelper.display({
+            cell:({row})=>(
+                <input type="checkbox" className="checkbox checkbox-info" />
+            ),
+            header:"Action"
+        }),
+        columnHelper.display({
+            cell:({row})=>(
+                <button className="btn btn-xs btn-outline p-1 border-2 border-red-500  text-red-500"><RiDeleteBin6Line size={15} /></button>
+            ),
+            header:"Action"
+        }),
+
     ];
 
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
-        // getPaginationRowModel: getPaginationRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
     });
 
     return (
