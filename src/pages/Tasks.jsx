@@ -1,5 +1,3 @@
-import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
 import { useMemo, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { RiDeleteBin6Line } from "react-icons/ri";
@@ -13,6 +11,9 @@ import {
 } from "@tanstack/react-table";
 import AddTaskModal from "../components/AddTaskModal";
 import { getTasks } from "../JS/tasks";
+import noDataImg from "../assets/no_data.png";
+import Swal from "sweetalert2";
+import { toast } from "react-toastify";
 
 const Tasks = () => {
     const localStorageTasks = getTasks();
@@ -22,9 +23,35 @@ const Tasks = () => {
         const updatedTasks = tasks.map((task) =>
             task.id === id ? { ...task, completed: !task.completed } : task
         );
-        
+
         localStorage.setItem("tasks", JSON.stringify(updatedTasks));
         setTasks(updatedTasks);
+    };
+
+    const handleDeleteTask = (id) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            imageUrl:"https://i.postimg.cc/hGQm2BLZ/undraw-Throw-away-re-x60k.png",
+            imageHeight:"200px",
+            showCancelButton: true,
+            confirmButtonColor: "#2563eb",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete it!",
+        }).then((result) => {
+            if (result.isConfirmed) {
+                try{
+                    const updatedTasks = localStorageTasks.filter(
+                        (task) => task.id !== id
+                    );
+                    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+                    setTasks(updatedTasks);
+                    toast.success("Task deleted successfully")
+                }catch(error){
+                    toast.error(error.message)
+                }
+            }
+        });
     };
 
     const data = useMemo(() => tasks, [tasks]);
@@ -87,7 +114,10 @@ const Tasks = () => {
         }),
         columnHelper.display({
             cell: ({ row }) => (
-                <button className="btn btn-xs btn-outline p-1 border-2 border-red-500  text-red-500">
+                <button
+                    onClick={() => handleDeleteTask(row.original.id)}
+                    className="btn btn-xs btn-outline p-1 border-2 border-red-500  text-red-500"
+                >
                     <RiDeleteBin6Line size={15} />
                 </button>
             ),
@@ -138,43 +168,55 @@ const Tasks = () => {
                 </div>
             </div>
 
-            <div className="mt-5">
-                <div className="overflow-x-auto">
-                    <table className="table">
-                        <thead className="font-bold text-black">
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <tr key={headerGroup.id}>
-                                    {headerGroup.headers.map((header) => (
-                                        <th key={header.id}>
-                                            {header.isPlaceholder
-                                                ? null
-                                                : flexRender(
-                                                      header.column.columnDef
-                                                          .header,
-                                                      header.getContext()
-                                                  )}
-                                        </th>
-                                    ))}
-                                </tr>
-                            ))}
-                        </thead>
-                        <tbody>
-                            {table.getRowModel().rows.map((row) => (
-                                <tr key={row.id}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <td key={cell.id}>
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
-                                        </td>
-                                    ))}
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+            {tasks.length === 0 ? (
+                <div className="flex justify-center items-center h-[70vh]">
+                    <div className="text-center text-gray-500 mt-5">
+                        <img src={noDataImg} alt="no_data" className="w-48" />
+                        <p>No tasks available</p>
+                        <p className="text-sm">
+                            Start by adding your first task!
+                        </p>
+                    </div>
                 </div>
-            </div>
+            ) : (
+                <div className="mt-5">
+                    <div className="overflow-x-auto">
+                        <table className="table">
+                            <thead className="font-bold text-black">
+                                {table.getHeaderGroups().map((headerGroup) => (
+                                    <tr key={headerGroup.id}>
+                                        {headerGroup.headers.map((header) => (
+                                            <th key={header.id}>
+                                                {header.isPlaceholder
+                                                    ? null
+                                                    : flexRender(
+                                                          header.column
+                                                              .columnDef.header,
+                                                          header.getContext()
+                                                      )}
+                                            </th>
+                                        ))}
+                                    </tr>
+                                ))}
+                            </thead>
+                            <tbody>
+                                {table.getRowModel().rows.map((row) => (
+                                    <tr key={row.id}>
+                                        {row.getVisibleCells().map((cell) => (
+                                            <td key={cell.id}>
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </td>
+                                        ))}
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            )}
             <AddTaskModal setTasks={setTasks} />
         </section>
     );
