@@ -39,7 +39,7 @@ Follow these steps to set up and launch the application locally:
 Clone the repository to your local machine:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/Sajid941/Task-Management.git
 ```
 ### Step 2: Install Dependencies
 Navigate to the project directory and install the necessary dependencies:
