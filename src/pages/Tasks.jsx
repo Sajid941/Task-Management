@@ -69,7 +69,7 @@ const Tasks = () => {
         }),
         columnHelper.accessor("title", {
             cell: (info) => info.getValue(),
-            header: "Task",
+            header: "Title",
         }),
         columnHelper.accessor("deadline", {
             cell: (info) => info.getValue(),
@@ -214,7 +214,7 @@ const Tasks = () => {
             ) : (
                 <div className="mt-5">
                     <div className="overflow-x-auto">
-                        <table className="table">
+                        <table className="table border">
                             <thead className="font-bold text-black">
                                 {table.getHeaderGroups().map((headerGroup) => (
                                     <tr key={headerGroup.id}>
