@@ -11,6 +11,7 @@ const AddTaskModal = ({ setTasks }) => {
         register,
         handleSubmit,
         formState: { errors },
+        reset
     } = useForm();
 
     const onSubmit = (data) => {
@@ -31,8 +32,9 @@ const AddTaskModal = ({ setTasks }) => {
                 );
 
                 setTasks(localStorageTasks);
-                
+
                 toast.success("Task added successfully");
+                reset()
                 document.getElementById("my_modal_3").close();
             } catch (error) {
                 toast.error(error.message);
