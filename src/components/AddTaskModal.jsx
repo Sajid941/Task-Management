@@ -1,14 +1,32 @@
+import { useId } from "react";
 import { useForm } from "react-hook-form";
+import { saveTask } from "../JS/tasks";
+import { toast } from "react-toastify";
 
 const AddTaskModal = () => {
-    
+    const id = useId();
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm();
 
-    const onSubmit = (data) => console.log(data);
+    const onSubmit = (data) => {
+        const task = {
+            id: id,
+            title: data.title,
+            deadline: data.deadline,
+            priority: data.priority,
+            completed: false,
+        };
+        try {
+            saveTask(task);
+            toast.success("Task added successfully");
+            document.getElementById("my_modal_3").close()
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
 
     return (
         <div>
@@ -67,7 +85,9 @@ const AddTaskModal = () => {
                                 <span className="label-text">Priority</span>
                             </div>
                             <select
-                                className={`select select-bordered w-full ${errors.priority && "select-error"}`}
+                                className={`select select-bordered w-full ${
+                                    errors.priority && "select-error"
+                                }`}
                                 defaultValue=""
                                 {...register("priority", {
                                     required: "Priority is required",
