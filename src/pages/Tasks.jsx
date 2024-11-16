@@ -149,7 +149,7 @@ const Tasks = () => {
     return (
         <section className="my-10 mx-5">
             <div className="md:flex justify-between">
-                <div>
+                <div className="md:flex gap-5">
                     <label className="input input-bordered flex items-center gap-2">
                         <input
                             type="text"
@@ -171,6 +171,23 @@ const Tasks = () => {
                             />
                         </svg>
                     </label>
+                    <div className="form-control w-full mt-5 md:mt-0 ">
+                            <select
+                            onChange={(e)=>setFiltering(e.target.value)}
+                                className={`select select-bordered w-full`}
+                                defaultValue=""
+
+                            >
+                                <option value="">
+                                    All Priority
+                                </option>
+                                <option value="Normal">Normal</option>
+                                <option value="High">High</option>
+                                <option value="Low">Low</option>
+                                <option value="Urgent">Urgent</option>
+                            </select>
+
+                        </div>
                 </div>
                 <div className="mt-5 md:mt-0 w-full md:w-auto">
                     <button
