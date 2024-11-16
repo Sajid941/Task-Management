@@ -6,6 +6,7 @@ import {
     createColumnHelper,
     flexRender,
     getCoreRowModel,
+    getFilteredRowModel,
     getPaginationRowModel,
     useReactTable,
 } from "@tanstack/react-table";
@@ -32,23 +33,24 @@ const Tasks = () => {
         Swal.fire({
             title: "Are you sure?",
             text: "You won't be able to revert this!",
-            imageUrl:"https://i.postimg.cc/hGQm2BLZ/undraw-Throw-away-re-x60k.png",
-            imageHeight:"200px",
+            imageUrl:
+                "https://i.postimg.cc/hGQm2BLZ/undraw-Throw-away-re-x60k.png",
+            imageHeight: "200px",
             showCancelButton: true,
             confirmButtonColor: "#2563eb",
             cancelButtonColor: "#d33",
             confirmButtonText: "Yes, delete it!",
         }).then((result) => {
             if (result.isConfirmed) {
-                try{
+                try {
                     const updatedTasks = localStorageTasks.filter(
                         (task) => task.id !== id
                     );
                     localStorage.setItem("tasks", JSON.stringify(updatedTasks));
                     setTasks(updatedTasks);
-                    toast.success("Task deleted successfully")
-                }catch(error){
-                    toast.error(error.message)
+                    toast.success("Task deleted successfully");
+                } catch (error) {
+                    toast.error(error.message);
                 }
             }
         });
@@ -125,15 +127,27 @@ const Tasks = () => {
         }),
     ];
 
+    const [filtering, setFiltering] = useState("");
+
     const table = useReactTable({
         data,
         columns,
         getCoreRowModel: getCoreRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        getFilteredRowModel: getFilteredRowModel(),
+        state: {
+            globalFilter: filtering,
+        },
+        initialState: {
+            pagination: {
+                pageSize: 5,
+            },
+        },
+        onGlobalFilterChange: setFiltering,
     });
 
     return (
-        <section className="mt-10 mx-5">
+        <section className="my-10 mx-5">
             <div className="md:flex justify-between">
                 <div>
                     <label className="input input-bordered flex items-center gap-2">
@@ -141,6 +155,8 @@ const Tasks = () => {
                             type="text"
                             className="grow"
                             placeholder="Search"
+                            value={filtering}
+                            onChange={(e) => setFiltering(e.target.value)}
                         />
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
@@ -215,6 +231,26 @@ const Tasks = () => {
                             </tbody>
                         </table>
                     </div>
+                    {tasks.length > 5 && (
+                        <div className="float-right">
+                            <div className="join grid grid-cols-2 mt-5">
+                                <button
+                                    onClick={() => table.previousPage()}
+                                    disabled={!table.getCanPreviousPage()}
+                                    className="join-item btn btn-outline"
+                                >
+                                    Previous page
+                                </button>
+                                <button
+                                    onClick={() => table.nextPage()}
+                                    disabled={!table.getCanNextPage()}
+                                    className="join-item btn btn-outline"
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    )}
                 </div>
             )}
             <AddTaskModal setTasks={setTasks} />
