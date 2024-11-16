@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { RxDotFilled } from "react-icons/rx";
@@ -12,15 +12,20 @@ import {
     useReactTable,
 } from "@tanstack/react-table";
 import AddTaskModal from "../components/AddTaskModal";
+import { getTasks } from "../JS/tasks";
 
 const Tasks = () => {
-    const { data: tasks = [] } = useQuery({
-        queryKey: ["tasks"],
-        queryFn: async () => {
-            const res = await axios.get("tasks.json");
-            return res.data;
-        },
-    });
+    const localStorageTasks = getTasks();
+    const [tasks, setTasks] = useState(localStorageTasks);
+
+    const handleMarkCompleted = (id) => {
+        const updatedTasks = tasks.map((task) =>
+            task.id === id ? { ...task, completed: !task.completed } : task
+        );
+        
+        localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+        setTasks(updatedTasks);
+    };
 
     const data = useMemo(() => tasks, [tasks]);
 
@@ -33,7 +38,7 @@ const Tasks = () => {
             cell: (info) => info.row.index + 1,
             header: "NO",
         }),
-        columnHelper.accessor("task", {
+        columnHelper.accessor("title", {
             cell: (info) => info.getValue(),
             header: "Task",
         }),
@@ -63,7 +68,7 @@ const Tasks = () => {
                     
                     `}
                 >
-                    <RxDotFilled/>
+                    <RxDotFilled />
                     {info.getValue()}
                 </span>
             ),
@@ -71,7 +76,12 @@ const Tasks = () => {
         }),
         columnHelper.display({
             cell: ({ row }) => (
-                <input type="checkbox" className="checkbox checkbox-info" />
+                <input
+                    onChange={() => handleMarkCompleted(row.original.id)}
+                    checked={row.original.completed === true}
+                    type="checkbox"
+                    className="checkbox checkbox-info"
+                />
             ),
             header: "Completed",
         }),
@@ -165,7 +175,7 @@ const Tasks = () => {
                     </table>
                 </div>
             </div>
-            <AddTaskModal/>
+            <AddTaskModal setTasks={setTasks} />
         </section>
     );
 };

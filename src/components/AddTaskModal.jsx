@@ -1,10 +1,12 @@
-import { useId } from "react";
 import { useForm } from "react-hook-form";
-import { saveTask } from "../JS/tasks";
+import { getTasks } from "../JS/tasks";
 import { toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
+import PropTypes from "prop-types";
 
-const AddTaskModal = () => {
-    const id = useId();
+const AddTaskModal = ({ setTasks }) => {
+    const localStorageTasks = getTasks();
+
     const {
         register,
         handleSubmit,
@@ -13,18 +15,28 @@ const AddTaskModal = () => {
 
     const onSubmit = (data) => {
         const task = {
-            id: id,
+            id: uuidv4(),
             title: data.title,
             deadline: data.deadline,
             priority: data.priority,
             completed: false,
         };
-        try {
-            saveTask(task);
-            toast.success("Task added successfully");
-            document.getElementById("my_modal_3").close()
-        } catch (error) {
-            toast.error(error.message);
+        if (task) {
+            try {
+                localStorageTasks.push(task);
+
+                localStorage.setItem(
+                    "tasks",
+                    JSON.stringify(localStorageTasks)
+                );
+
+                setTasks(localStorageTasks);
+                
+                toast.success("Task added successfully");
+                document.getElementById("my_modal_3").close();
+            } catch (error) {
+                toast.error(error.message);
+            }
         }
     };
 
@@ -121,3 +133,7 @@ const AddTaskModal = () => {
 };
 
 export default AddTaskModal;
+
+AddTaskModal.propTypes = {
+    setTasks: PropTypes.func,
+};
